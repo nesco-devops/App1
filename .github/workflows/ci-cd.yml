@@ -19,7 +19,9 @@ jobs:
       image_name: appgestion-frontend
       build_context: ./frontend
       dockerfile: ./frontend/Dockerfile
+      gitops_manifest: frontend/deployment.yaml
 
     secrets:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      GITOPS_TOKEN: ${{ secrets.GITOPS_TOKEN }}
