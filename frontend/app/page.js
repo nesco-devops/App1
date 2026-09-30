@@ -19,7 +19,7 @@ export default function HomePage() {
           </Link>
 
           <Link href="/produits/ajouter" className="button button-secondary">
-            Ajouter un produit
+            Ajouter un produit22
           </Link>
         </div>
       </div>
