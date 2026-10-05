@@ -36,9 +36,38 @@ export default function ProductsPage() {
     }
   }, []);
 
-  useEffect(() => {
-    loadProducts();
-  }, [loadProducts]);
+    useEffect(() => {
+    let ignore = false;
+
+    async function fetchInitialProducts() {
+      try {
+        const data = await getProducts("");
+
+        if (ignore) return;
+
+        const productList = Array.isArray(data)
+          ? data
+          : data.products || data.produits || [];
+
+        setProducts(productList);
+        setError("");
+      } catch (loadError) {
+        if (!ignore) {
+          setError(loadError.message);
+        }
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
+      }
+    }
+
+    fetchInitialProducts();
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   function handleSearch() {
     loadProducts(search);
