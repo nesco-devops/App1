@@ -1,14 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-const emptyProduct = {
-  nom: "",
-  categorie: "",
-  prix: "",
-  quantite: "",
-  description: "",
-};
+import { useState } from "react";
 
 export default function ProductForm({
   initialProduct,
@@ -16,20 +8,16 @@ export default function ProductForm({
   submitLabel = "Enregistrer",
   loading = false,
 }) {
-  const [product, setProduct] = useState(emptyProduct);
+  const [product, setProduct] = useState(() => ({
+    nom: initialProduct?.nom ?? "",
+    categorie: initialProduct?.categorie ?? "",
+    prix: initialProduct?.prix ?? "",
+    quantite: initialProduct?.quantite ?? "",
+    description: initialProduct?.description ?? "",
+  }));
+
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    if (initialProduct) {
-      setProduct({
-        nom: initialProduct.nom || "",
-        categorie: initialProduct.categorie || "",
-        prix: initialProduct.prix ?? "",
-        quantite: initialProduct.quantite ?? "",
-        description: initialProduct.description || "",
-      });
-    }
-  }, [initialProduct]);
 
   function handleChange(event) {
     const { name, value } = event.target;

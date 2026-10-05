@@ -87,6 +87,7 @@ export default function EditProductPage({ params }) {
 
       <div className="form-card">
         <ProductForm
+          key={id}
           initialProduct={product}
           onSubmit={handleUpdate}
           submitLabel="Enregistrer les modifications"
