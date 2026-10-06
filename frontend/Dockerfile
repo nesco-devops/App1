@@ -1,32 +1,43 @@
-FROM node:22-bookworm-slim AS build
+FROM node:22-alpine AS build
 
 WORKDIR /app
 
 ARG NEXT_PUBLIC_API_URL=/api
 ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+ENV NEXT_TELEMETRY_DISABLED=1
 
 COPY package.json package-lock.json ./
-
 RUN npm ci
 
 COPY . .
 
 RUN npm run build
 
-FROM node:22-bookworm-slim AS runtime
 
-ENV NODE_ENV=production
+FROM node:22-alpine AS runtime
+
+RUN apk upgrade --no-cache
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
 
-RUN npm ci --omit=dev && npm cache clean --force
+RUN rm -rf /usr/local/lib/node_modules/npm \
+    /opt/yarn-* \
+    /usr/local/bin/npm \
+    /usr/local/bin/npx \
+    /usr/local/bin/yarn \
+    /usr/local/bin/yarnpkg
 
-COPY --from=build /app/.next ./.next
-COPY --from=build /app/public ./public
-COPY --from=build /app/next.config.mjs ./next.config.mjs
+COPY --from=build --chown=node:node /app/.next/standalone ./
+COPY --from=build --chown=node:node /app/.next/static ./.next/static
+COPY --from=build --chown=node:node /app/public ./public
+
+USER node
 
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD ["node", "server.js"]
